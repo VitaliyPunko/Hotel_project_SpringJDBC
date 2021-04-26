@@ -1,6 +1,7 @@
 package com.punko;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Resident {
 
@@ -21,12 +22,13 @@ public class Resident {
     public Resident() {
     }
 
-    public Resident(String firstName, String lastName, String email, LocalDate arrivalTime, LocalDate departureTime) {
+    public Resident(String firstName, String lastName, String email, LocalDate arrivalTime, LocalDate departureTime, Integer apartmentNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.arrivalTime = arrivalTime;
         this.departureTime = departureTime;
+        this.apartmentNumber = apartmentNumber;
     }
 
     public Integer getResidentId() {
@@ -96,5 +98,18 @@ public class Resident {
                 ", departureTime=" + departureTime +
                 ", apartmentId=" + apartmentNumber +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Resident resident = (Resident) o;
+        return residentId.equals(resident.residentId) && firstName.equals(resident.firstName) && lastName.equals(resident.lastName) && email.equals(resident.email) && arrivalTime.equals(resident.arrivalTime) && departureTime.equals(resident.departureTime) && Objects.equals(apartmentNumber, resident.apartmentNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(residentId, firstName, lastName, email, arrivalTime, departureTime, apartmentNumber);
     }
 }

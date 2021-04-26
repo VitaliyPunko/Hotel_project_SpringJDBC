@@ -17,4 +17,6 @@ public interface ApartmentDao {
     Integer delete(Integer apartmentId);
 
     Integer count();
+
+    List<String> getAllApartmentClass();
 }

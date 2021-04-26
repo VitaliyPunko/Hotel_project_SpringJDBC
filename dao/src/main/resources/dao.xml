@@ -8,7 +8,7 @@
         <property name="locations">
             <list>
                 <value>classpath:dao.properties</value>
-<!--                <value>classpath:daoResident.properties</value>-->
+                <value>classpath:daoResident.properties</value>
             </list>
         </property>
     </bean>
