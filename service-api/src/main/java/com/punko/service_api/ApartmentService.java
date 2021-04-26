@@ -1,7 +1,5 @@
 package com.punko.service_api;
 
-
-
 import com.punko.Apartment;
 
 import java.util.List;
