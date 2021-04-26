@@ -10,12 +10,12 @@ public class ApartmentDto {
 
     private String apartmentClass;
 
-    //should be number?
+    //average date in H2 return number
     /**
      average between arrivalTime
      and departureTime form Resident.class
     */
-    private Double averageTime;
+    private Integer averageTime;
 
     public ApartmentDto() {
     }
@@ -49,11 +49,11 @@ public class ApartmentDto {
         this.apartmentClass = apartmentClass;
     }
 
-    public Double getAverageTime() {
+    public Integer getAverageTime() {
         return averageTime;
     }
 
-    public void setAverageTime(Double averageTime) {
+    public void setAverageTime(Integer averageTime) {
         this.averageTime = averageTime;
     }
 

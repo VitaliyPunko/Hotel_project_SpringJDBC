@@ -1,10 +1,10 @@
-package com.punko.dao_api;
+package com.punko.service_api;
 
 import com.punko.Apartment;
 
 import java.util.List;
 
-public interface ApartmentDao {
+public interface ApartmentService {
 
     List<Apartment> findAll();
 
@@ -18,5 +18,10 @@ public interface ApartmentDao {
 
     Integer count();
 
+    /**
+     * get Apartments classes
+     * @return List String
+     */
     List<String> getAllApartmentClass();
+
 }

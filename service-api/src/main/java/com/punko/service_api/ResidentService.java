@@ -1,4 +1,4 @@
-package com.punko.dao_api;
+package com.punko.service_api;
 
 import com.punko.Apartment;
 import com.punko.Resident;
@@ -6,7 +6,7 @@ import com.punko.Resident;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface ResidentDao {
+public interface ResidentService {
 
     List<Resident> findAll();
 
@@ -16,7 +16,7 @@ public interface ResidentDao {
 
     Resident findById(Integer id);
 
-    void updateResident(Resident resident);
+    void update(Resident resident);
 
     Integer delete(Integer id);
 
@@ -25,4 +25,5 @@ public interface ResidentDao {
     Integer count();
 
     List<Resident> orderByDate();
+
 }
