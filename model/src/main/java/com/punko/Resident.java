@@ -16,7 +16,7 @@ public class Resident {
 
     private LocalDate departureTime;
 
-    private Integer apartmentId;
+    private Integer apartmentNumber;
 
     public Resident() {
     }
@@ -77,12 +77,12 @@ public class Resident {
         this.departureTime = departureTime;
     }
 
-    public Integer getApartmentId() {
-        return apartmentId;
+    public Integer getApartmentNumber() {
+        return apartmentNumber;
     }
 
-    public void setApartmentId(Integer apartmentId) {
-        this.apartmentId = apartmentId;
+    public void setApartmentNumber(Integer apartmentNumber) {
+        this.apartmentNumber = apartmentNumber;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class Resident {
                 ", email='" + email + '\'' +
                 ", arrivalTime=" + arrivalTime +
                 ", departureTime=" + departureTime +
-                ", apartmentId=" + apartmentId +
+                ", apartmentId=" + apartmentNumber +
                 '}';
     }
 }
