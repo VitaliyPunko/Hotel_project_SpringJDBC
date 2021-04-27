@@ -1,13 +1,21 @@
 package com.punko;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class Apartment {
 
     private Integer apartmentId;
 
+    @Min(value = 1, message = "Apartment number should be more than 0")
+    @Max(value = 1000, message = "Apartment number should be less than 1001")
+    @NotNull(message = "Apartment number is a required field")
     private Integer apartmentNumber;
 
+    @NotBlank(message = "Apartment class is a required field")
     private String apartmentClass;
 
     public Apartment() {
@@ -41,6 +49,7 @@ public class Apartment {
     public void setApartmentClass(String apartmentClass) {
         this.apartmentClass = apartmentClass;
     }
+
 
     @Override
     public boolean equals(Object o) {

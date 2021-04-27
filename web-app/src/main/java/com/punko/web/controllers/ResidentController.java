@@ -1,5 +1,4 @@
-package com.punko.web;
-
+package com.punko.web.controllers;
 
 import com.punko.Resident;
 import com.punko.service_api.ResidentService;

@@ -1,20 +1,39 @@
 package com.punko;
 
+import com.punko.validation.CheckDate;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@CheckDate(message = "Arrival time should be before than Departure time")
 public class Resident {
 
     private Integer residentId;
 
+    @NotBlank(message = "First name is a required field")
+    @Size(min = 2, max = 20, message = "First name should be min 2, max 20 symbols")
     private String firstName;
 
+    @NotBlank(message = "Last name is a required field")
+    @Size(min = 2, max = 20, message = "Last name should be min 2, max 20 symbols")
     private String lastName;
 
+    @NotBlank(message = "Email name is a required field")
+    @Size(min = 2, max = 50, message = "Email name should be min 2, max 50 symbols")
+    @Email(message = "use correct email")
     private String email;
 
+    @NotNull(message = "arrival time is a required field")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate arrivalTime;
 
+    @NotNull(message = "departure time is a required field")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate departureTime;
 
     private Integer apartmentNumber;

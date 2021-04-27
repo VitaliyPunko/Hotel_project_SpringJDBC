@@ -1,4 +1,4 @@
-package com.punko.web;
+package com.punko.web.controllers;
 
 
 import com.punko.Apartment;
@@ -6,7 +6,6 @@ import com.punko.service_api.ApartmentDtoService;
 import com.punko.service_api.ApartmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,11 +21,10 @@ public class ApartmentController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApartmentController.class);
 
-    ApartmentDtoService apartmentDtoService;
+    private final ApartmentDtoService apartmentDtoService;
 
-    ApartmentService apartmentService;
+    private final ApartmentService apartmentService;
 
-    @Autowired
     public ApartmentController(ApartmentDtoService apartmentDtoService, ApartmentService apartmentService) {
         this.apartmentDtoService = apartmentDtoService;
         this.apartmentService = apartmentService;
@@ -110,47 +108,4 @@ public class ApartmentController {
         return "redirect:/apartments";
     }
 
-
 }
-
-//    @Autowired
-//    ApartmentService apartmentService;
-//
-//    @RequestMapping("")
-//    public String showAllApartment(Model model) {
-//        List<Apartment> apartmentList = apartmentService.findAll();
-//        model.addAttribute("allApartments", apartmentList);
-//
-//        return "apartments";
-//    }
-//
-//    @RequestMapping("/addApartment")
-//    public String addApartment(Model model) {
-//        Apartment apartment = new Apartment();
-//        model.addAttribute("addApartmentAttribute", apartment);
-//        return "apartmentPage";
-//    }
-//
-//    @RequestMapping("/saveApartment")
-//    public String saveApartment(@ModelAttribute("addApartmentAttribute") Apartment apartment) {
-//        apartmentService.create(apartment);
-//        return "redirect:/apartments";
-//    }
-//
-//    /**
-//     *  name of attribute must be the same like in addApartment
-//     *  because they return the same jsp page
-//     */
-//    @RequestMapping("/updateApartment/{id}")
-//    public String updateApartment(@PathVariable int id, Model model) {
-//        Apartment apartment = apartmentService.findById(id);
-//        model.addAttribute("addApartmentAttribute", apartment);
-//        return "apartmentPage";
-//    }
-//
-//    @RequestMapping("/deleteApartment/{id}")
-//    public String deleteApartment(@PathVariable int id) {
-//        apartmentService.delete(id);
-//        return "redirect:/apartments";
-//    }
-//}
