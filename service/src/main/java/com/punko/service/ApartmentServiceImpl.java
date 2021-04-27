@@ -13,12 +13,13 @@ import java.util.List;
 @Transactional
 public class ApartmentServiceImpl implements ApartmentService {
 
-    @Autowired
     private final ApartmentDao apartmentDao;
 
+    @Autowired
     public ApartmentServiceImpl(ApartmentDao apartmentDao) {
         this.apartmentDao = apartmentDao;
     }
+
 
     @Override
     public List<Apartment> findAll() {

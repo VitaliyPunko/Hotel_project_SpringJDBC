@@ -15,8 +15,12 @@ import java.util.List;
 @Transactional
 public class ResidentServiceImpl implements ResidentService {
 
-    @Autowired
     ResidentDao residentDao;
+
+    @Autowired
+    public ResidentServiceImpl(ResidentDao residentDao) {
+        this.residentDao = residentDao;
+    }
 
     @Override
     public List<Resident> findAll() {

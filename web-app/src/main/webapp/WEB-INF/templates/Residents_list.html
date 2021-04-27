@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="../../resources/static/css/bootstrap.css"
+          th:href="@{/resources/static/css/bootstrap.css}">
+    <link rel="stylesheet" href="../../resources/static/css/style.css"
+          th:href="@{/resources/static/css/style.css}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <title>Residents list</title>
+</head>
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark ext-light p-1">
+        <div class="container-fluid">
+            <!--            <a class="navbar-brand" href="#">Hotel</a>-->
+            <a href="/" class="navbar-brand"><img src="../../resources/static/img/hotel_blue.svg"
+                                                  th:src="@{/resources/static/img/hotel_blue.svg}"
+                                                  height="32" width="32" alt="Hotel"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="apartments.html"
+                           th:href="@{/apartments}">Apartments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="Residents_list.html"
+                           th:href="@{/residents}">Residents</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <nav id="main-header"
+         class="py-1 mb-3 navbar navbar-light bg-light text-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand">List of residents</span>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="Resident.html"
+                       th:href="@{/resident}"
+                       class="btn btn-light"
+                       title="Add resident">
+                        <i class="bi-plus"></i>&nbsp;<span class="d-none d-sm-inline">Add resident</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<section id="employees">
+    <form class="d-flex"
+          action="/search"
+          th:method="@{get}">
+        <div class="col-sm-2">
+            <input class="form-control form-control-sm" name="arrivalTime" type="date" aria-label="arrivalTime"
+                   id="arrivalTime">
+        </div>
+        <div class="col-sm-2">
+            <input class="form-control form-control-sm" name="departureTime" type="date" aria-label="departureTime"
+                   id="departureTime">
+        </div>
+        <button type="submit" class="btn btn-outline-secondary btn-sm">Search</button>
+    </form>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <table class="table table-striped">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th><a class="nav-link" href="apartments.html"
+                               th:href="@{/residents/order}">order</a>
+                            Arrival Time
+                        </th>
+                        <th>Departure Time</th>
+                        <th>№ Apartment</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="residents : ${allResidentsAttribute}">
+                        <td th:text="${residents.firstName}">Den</td>
+                        <td th:text="${residents.lastName}">Brown</td>
+                        <td th:text="${residents.email}">Brown@test.com</td>
+                        <td th:text="${residents.arrivalTime}">2021-02-26</td>
+                        <td th:text="${residents.departureTime}">2021-03-29</td>
+                        <td th:text="${residents.apartmentNumber}">102</td>
+                        <td class="text-end">
+                            <a href="Resident.html"
+                               th:href="@{|/resident/${residents.residentId}|}"
+                               class="btn-sm btn-outline-secondary"
+                               title="Edit resident">
+                                <i class="bi-pen"></i><span class="d-none d-md-inline">&nbsp;Edit</span></a>
+                            <span data-bs-toggle="modal" data-bs-target="#deleteDialog"
+                                  th:attr="data-id=${residents.residentId},
+                                               data-name=${residents.firstName}">
+                                        <a href="#" class="btn-sm btn-outline-secondary"
+                                           title="delete resident"><i class="bi-x"></i><span
+                                                class="d-none d-md-inline">&nbsp;Delete</span>
+                                        </a>
+                                    </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--    </div>-->
+</section>
+
+<footer>
+    <hr/>
+    <p class="text-center">&copy; 2021</p>
+</footer>
+
+<!-- Confirm delete Modal -->
+<div class="modal fade" id="deleteDialog" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header alert-danger">
+                <h5 class="modal-title" id="exampleModalLabel">Delete apartment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Please confirm delete
+            </div>
+            <div class="modal-footer">
+                <!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>-->
+                <a id="cancel" href="/residents" class="btn btn-secondary">Cancel</a>
+                <a id="deleteUrl" href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../../resources/static/js/bootstrap.bundle.min.js"
+        th:src="@{/resources/static/js/bootstrap.bundle.min.js}"></script>
+<script src="../../resources/static/js/jquery-3.4.1.slim.min.js"
+        th:src="@{/resources/static/js/jquery-3.4.1.slim.min.js}"></script>
+<script>
+    $('#deleteDialog').on('show.bs.modal', function (event) {
+        var target = $(event.relatedTarget)
+        $(this).find('.modal-body').text('Please, confirm delete resident with name: ' + target.data('name') + '')
+        document.getElementById('deleteUrl').href = '/resident/' + target.data('id') + '/delete';
+    })
+</script>
+
+</body>
+</html>
