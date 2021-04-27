@@ -16,8 +16,9 @@ public class GlobalExceptionHandler {
 
     public static final String DEFAULT_ERROR_VIEW = "errorPage";
 
-    @ExceptionHandler(value = HttpClientErrorException.class)
-    public ModelAndView defaultErrorHandler(HttpClientErrorException e) throws Exception {
+    //type Exception? HttpClientErrorException
+    @ExceptionHandler(value = Exception.class)
+    public ModelAndView defaultErrorHandler(Exception e) throws Exception {
         if (AnnotationUtils.findAnnotation
                 (e.getClass(), ResponseStatus.class) != null)
             throw e;

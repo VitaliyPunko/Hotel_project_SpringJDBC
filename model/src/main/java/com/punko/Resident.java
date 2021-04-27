@@ -3,10 +3,7 @@ package com.punko;
 import com.punko.validation.CheckDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -28,14 +25,15 @@ public class Resident {
     @Email(message = "use correct email")
     private String email;
 
-    @NotNull(message = "arrival time is a required field")
+    @NotNull(message = "Arrival time is a required field")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate arrivalTime;
 
-    @NotNull(message = "departure time is a required field")
+    @NotNull(message = "Departure time is a required field")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate departureTime;
 
+    @Min(value = 1, message = "Apartment number is a required field")
     private Integer apartmentNumber;
 
     public Resident() {
