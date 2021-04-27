@@ -69,6 +69,7 @@
                    id="departureTime">
         </div>
         <button type="submit" class="btn btn-outline-secondary btn-sm">Search</button>
+        &nbsp; from Arrival Time to Departure Time
     </form>
     <div class="row">
         <div class="col">
@@ -79,8 +80,12 @@
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Email</th>
-                        <th><a class="nav-link" href="apartments.html"
-                               th:href="@{/residents/order}">order</a>
+                        <th>
+                            <a href="apartments.html"
+                               th:href="@{/residents/order}"
+                               class="btn-sm btn-outline-secondary">
+                                <i class="bi bi-arrow-down" style="font-size: 1rem; color: gray;"></i>
+                                <span class="d-none d-md-inline"></span></a>
                             Arrival Time
                         </th>
                         <th>Departure Time</th>
@@ -117,12 +122,11 @@
             </div>
         </div>
     </div>
-    <!--    </div>-->
 </section>
 
 <footer>
     <hr/>
-    <p class="text-center">&copy; 2021</p>
+    <p class="text-center">Vitaliy Punko &copy; 2021</p>
 </footer>
 
 <!-- Confirm delete Modal -->
@@ -138,7 +142,6 @@
                 Please confirm delete
             </div>
             <div class="modal-footer">
-                <!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>-->
                 <a id="cancel" href="/residents" class="btn btn-secondary">Cancel</a>
                 <a id="deleteUrl" href="#" class="btn btn-danger">Delete</a>
             </div>
