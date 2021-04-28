@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+            xsi:schemaLocation="http://www.springframework.org/schema/beans
+    	http://www.springframework.org/schema/beans/spring-beans.xsd
+    	http://www.springframework.org/schema/context
+    	http://www.springframework.org/schema/context/spring-context.xsd
+    	http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache
+		http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+    <context:component-scan base-package="com.punko.web, com.punko.service_api, com.punko"/>
+<!--    <cache:annotation-driven proxy-target-class="true"/>-->
+
+    <bean id="namedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+
+<!--    <bean id="apartmentDaoDto" class="com.punko.dao_impl.ApartmentDaoDtoImpl">-->
+<!--        <constructor-arg ref="namedParameterJdbcTemplate"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="apartmentDao" class="com.punko.dao_impl.ApartmentDaoImpl">-->
+<!--        <constructor-arg ref="namedParameterJdbcTemplate"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="residentDao" class="com.punko.dao_impl.ResidentDaoImpl">-->
+<!--        <constructor-arg ref="namedParameterJdbcTemplate"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="apartmentServiceDto" class="com.punko.service.ApartmentDtoServiceImpl">-->
+<!--        <constructor-arg ref="apartmentDaoDto"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="apartmentService" class="com.punko.service.ApartmentServiceImpl">-->
+<!--        <constructor-arg ref="apartmentDao"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="residentService" class="com.punko.service.ResidentServiceImpl">-->
+<!--        <constructor-arg ref="residentDao"/>-->
+<!--    </bean>-->
+
+
+    <!-- Use spring servlet for all requests, including static resources -->
+    <mvc:default-servlet-handler/>
+
+    <!--    for using @annotation Spring MVC Controller -->
+    <mvc:annotation-driven/>
+
+    <import resource="classpath*:test-db.xml"/>
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:dao.properties</value>
+                <value>classpath:daoResident.properties</value>
+            </list>
+        </property>
+    </bean>
+
+<!--    for using aspect annotation-->
+<!--    <aop:aspectj-autoproxy/>-->
+
+    <!-- Thymeleaf Template Resolver -->
+    <bean id="templateResolver"
+          class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
+        <property name="prefix" value="/WEB-INF/templates/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML" />
+        <!-- Template cache is true by default. Set to false if you want             -->
+        <!-- templates to be automatically updated when modified.                    -->
+        <property name="cacheable" value="false" />
+    </bean>
+
+    <!-- Thymeleaf Template Engine (Spring5-specific version) -->
+    <bean id="templateEngine"
+          class="org.thymeleaf.spring5.SpringTemplateEngine">
+        <property name="templateResolvers">
+            <set>
+                <ref bean="templateResolver" />
+            </set>
+        </property>
+    </bean>
+
+    <!-- Thymeleaf View Resolver - implementation of Spring's ViewResolver interface -->
+    <bean id="viewResolver" class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
+        <property name="templateEngine" ref="templateEngine" />
+        <property name="characterEncoding" value="UTF-8" />
+    </bean>
+
+
+</beans>
