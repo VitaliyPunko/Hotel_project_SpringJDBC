@@ -52,10 +52,12 @@ public class ResidentController {
         return "redirect:/residents";
     }
 
+    //if id doesn't exist return errorPage. Look GlobalExceptionHandler
     @GetMapping("/resident/{id}")
     public String gotoEditResidentPage(@PathVariable Integer id, Model model) {
         LOGGER.debug("go to Edit Resident Page({})", id);
         Resident resident = residentService.findById(id);
+
         model.addAttribute("residentAttribute", resident);
         model.addAttribute("allApartmentNumbers", residentService.getAllApartmentNumber());
         model.addAttribute("isNew", false);
@@ -93,18 +95,6 @@ public class ResidentController {
         return "Residents_list";
     }
 
-//    @GetMapping("/search")
-//    public String searchAllResidentByDate(@RequestParam("arrivalTime") String arrivalTime,
-//                                          @RequestParam("departureTime") String departureTime,
-//                                          Model model) {
-//        LOGGER.debug("search residents by date() {} {}", arrivalTime, departureTime);
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//        LocalDate arrival = LocalDate.parse(arrivalTime, formatter);
-//        LocalDate departure = LocalDate.parse(departureTime, formatter);
-//        List<Resident> residentListByTime = residentService.findAllByTime(arrival, departure);
-//        model.addAttribute("allResidentsAttribute", residentListByTime);
-//        return "Residents_list";
-//    }
 
     @GetMapping("/residents/order")
     public String getAllResidentOrderByDate(Model model) {
