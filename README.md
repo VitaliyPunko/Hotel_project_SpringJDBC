@@ -3,7 +3,7 @@
 # Vitaliy Punko, Hotel project
 
 This is simple 'Hotel' web application. Which used Spring JDBC, Data base from memory and JUnit 5.
-### You can look documentation [here](Document.md)
+### You can look documentation [here](documentation/Document.md)
 ## Requirements
 
 * JDK 11
@@ -28,4 +28,4 @@ To stop Web application:
 Ctrl + C
 ```
 
-Server up on [http://localhost:8080/apartments](http://localhost:8080/apartments).
+Server up on [http://localhost:8080](http://localhost:8080).

@@ -8,9 +8,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,12 +21,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Arrays;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
-import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -42,10 +33,11 @@ public class ApartmentControllerTest {
     @Autowired
     private WebApplicationContext wac;
 
-    //позволяет создать замокированный контекст.
-    //т.е. мы не поднимаем все приложение, а оно мокируется.
-    // мы можем сконфигурировать на основе applicationContext-a
-    // все наше приложение получается смоделированно. И мы тестируем веб-прложение
+    //    Another useful approach is to not start the server at all but to test only the layer below that,
+//    where Spring handles the incoming HTTP request and hands it off to your controller.
+//    That way, almost of the full stack is used, and your code will be called in exactly
+//    the same way as if it were processing a real HTTP request but without the cost of starting the server.
+//    https://spring.io/guides/gs/testing-web/
     private MockMvc mockMvc;
 
     @Autowired
@@ -54,9 +46,6 @@ public class ApartmentControllerTest {
     @Autowired
     private ApartmentDtoService apartmentDtoService;
 
-    @Captor
-    private ArgumentCaptor<Apartment> captor;
-
     @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
@@ -64,10 +53,9 @@ public class ApartmentControllerTest {
 
     @Test
     public void shouldReturnApartmentsPage() throws Exception {
-        ApartmentDto dto1 = createApartmentDto(1, 101, "LUXURIOUS", 11);
+        ApartmentDto dto1 = createApartmentDto(1, 101, "LUXURIOUS", 12);
         ApartmentDto dto2 = createApartmentDto(2, 102, "CHEAP", 109);
         ApartmentDto dto3 = createApartmentDto(3, 105, "MEDIUM", null);
-        Mockito.when(apartmentDtoService.findAllWithAvgTime()).thenReturn(Arrays.asList(dto1, dto2, dto3));
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/apartments")
         ).andDo(MockMvcResultHandlers.print())
@@ -81,7 +69,7 @@ public class ApartmentControllerTest {
                                 hasProperty("apartmentId", is(dto1.getApartmentId())),
                                 hasProperty("apartmentNumber", is(dto1.getApartmentNumber())),
                                 hasProperty("apartmentClass", is(dto1.getApartmentClass())),
-                                hasProperty("avgDifferenceBetweenTime", is(dto1.getAverageTime()))
+                                hasProperty("averageTime", is(dto1.getAverageTime()))
                         )
                 )))
                 .andExpect(model().attribute("allApartmentsAttribute", hasItem(
@@ -89,7 +77,7 @@ public class ApartmentControllerTest {
                                 hasProperty("apartmentId", is(dto2.getApartmentId())),
                                 hasProperty("apartmentNumber", is(dto2.getApartmentNumber())),
                                 hasProperty("apartmentClass", is(dto2.getApartmentClass())),
-                                hasProperty("avgDifferenceBetweenTime", is(dto2.getAverageTime()))
+                                hasProperty("averageTime", is(dto2.getAverageTime()))
                         )
                 )))
                 .andExpect(model().attribute("allApartmentsAttribute", hasItem(
@@ -97,7 +85,7 @@ public class ApartmentControllerTest {
                                 hasProperty("apartmentId", is(dto3.getApartmentId())),
                                 hasProperty("apartmentNumber", is(dto3.getApartmentNumber())),
                                 hasProperty("apartmentClass", is(dto3.getApartmentClass())),
-                                hasProperty("avgDifferenceBetweenTime", isEmptyOrNullString())
+                                hasProperty("averageTime", isEmptyOrNullString())
                         )
                 )))
         ;
@@ -113,11 +101,11 @@ public class ApartmentControllerTest {
                 .andExpect(view().name("apartmentPage"))
                 .andExpect(model().attribute("isNew", is(true)))
                 .andExpect(model().attribute("apartmentAttribute", isA(Apartment.class)));
-        verifyNoMoreInteractions(apartmentService, apartmentDtoService);
     }
 
     @Test
     public void shouldAddNewApartment() throws Exception {
+        int countBefore = apartmentService.count();
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/apartment")
@@ -128,17 +116,26 @@ public class ApartmentControllerTest {
                 .andExpect(view().name("redirect:/apartments"))
                 .andExpect(redirectedUrl("/apartments"));
 
-        verify(apartmentService).create(captor.capture());
-
-        Apartment apartment = captor.getValue();
-        Assertions.assertEquals(10, apartment.getApartmentNumber());
-        Assertions.assertEquals("MEDIUM", apartment.getApartmentClass());
+        int countAfter = apartmentService.count();
+        Assertions.assertEquals(countBefore + 1, countAfter);
     }
+
+//TODO fix
+
+//    @Test
+//    public void shouldAddingNewApartmentWithWrongParam() throws Exception {
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.post("/apartment")
+//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+//                        .param("apartmentNumber", String.valueOf(-10))
+//                        .param("apartmentClass", "SomeWord")
+//        ).andExpect(status().is3xxRedirection())
+//                .andExpect(view().name("/apartmentPage"));
+//    }
 
     @Test
     public void shouldOpenEditApartmentPageById() throws Exception {
         Apartment apartment = createApartment(1, 101, "LUXURIOUS");
-        when(apartmentService.findById(any())).thenReturn(apartment);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/apartment/" + apartment.getApartmentId())
         ).andDo(MockMvcResultHandlers.print())
@@ -160,15 +157,16 @@ public class ApartmentControllerTest {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/apartment/" + id)
         ).andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/apartments"));
-        verify(apartmentService).findById(id);
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(result -> Assertions.assertTrue(result.getResolvedException()
+                        instanceof IllegalArgumentException))
+                .andExpect(MockMvcResultMatchers.view().name("errorPage"));
     }
 
     @Test
     public void shouldUpdateApartmentAfterEdit() throws Exception {
-
-        String testName = "LUXURIOUS";
+        //Apartment with id = 1 has class = LUXURIOUS
+        String testName = "CHEAP";
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/apartment/1")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -179,24 +177,28 @@ public class ApartmentControllerTest {
                 .andExpect(view().name("redirect:/apartments"))
                 .andExpect(redirectedUrl("/apartments"));
 
-        verify(apartmentService).update(captor.capture());
-
-        Apartment apartment = captor.getValue();
+        Apartment apartment = apartmentService.findById(1);
         Assertions.assertEquals(testName, apartment.getApartmentClass());
     }
 
     @Test
     public void shouldDeleteApartment() throws Exception {
-
+        int countBefore = apartmentService.count();
+        int id = 3;
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/apartment/3/delete")
+                MockMvcRequestBuilders.get("/apartment/" + id + "/delete")
         ).andExpect(status().isFound())
                 .andExpect(view().name("redirect:/apartments"))
                 .andExpect(redirectedUrl("/apartments"));
 
-        verify(apartmentService).delete(3);
+        int countAfter = apartmentService.count();
+        Assertions.assertEquals(countBefore, countAfter + 1);
     }
 
+
+    /*
+  create this method because of Apartment class hasn't id field in constructor
+   */
     private Apartment createApartment(int id, int number, String apartmentClass) {
         Apartment apartment = new Apartment();
         apartment.setApartmentId(id);

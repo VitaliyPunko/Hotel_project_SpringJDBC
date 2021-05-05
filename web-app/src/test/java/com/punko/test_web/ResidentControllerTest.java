@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,12 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 
-import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -55,16 +50,19 @@ public class ResidentControllerTest {
 
     @Test
     public void shouldReturnResidentsPage() throws Exception {
-        Resident resident1 = new Resident("Stephen", "King", "stephenking@test.com", LocalDate.of(2021, 3, 13),
+        Resident resident1 = createResident(1, "Stephen", "King", "stephenking@test.com",
+                LocalDate.of(2021, 3, 13),
                 LocalDate.of(2021, 3, 23), 101);
-        Resident resident2 = new Resident("Margaret", "Mitchell", "margaretmitchell@test.com", LocalDate.of(2020, 2, 26),
+        Resident resident2 = createResident(2, "Margaret", "Mitchell", "margaretmitchell@test.com",
+                LocalDate.of(2020, 10, 26),
                 LocalDate.of(2021, 4, 10), 102);
-        Resident resident3 = new Resident("Den", "Brown", "denbrown@test.com", LocalDate.of(2021, 2, 13),
-                LocalDate.of(2021, 2, 25), 101);
-        Resident resident4 = new Resident("Erich", "Remark", "remark@test.com", LocalDate.of(2021, 4, 10),
+        Resident resident3 = createResident(3, "Den", "Brown", "denbrown@test.com",
+                LocalDate.of(2021, 2, 13),
+                LocalDate.of(2021, 2, 26), 101);
+        Resident resident4 = createResident(4, "Erich", "Remark", "remark@test.com",
+                LocalDate.of(2021, 4, 10),
                 LocalDate.of(2021, 6, 1), 102);
 
-        Mockito.when(residentService.findAll()).thenReturn(Arrays.asList(resident1, resident2, resident3, resident4));
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/residents")
         ).andDo(MockMvcResultHandlers.print())
@@ -128,18 +126,18 @@ public class ResidentControllerTest {
                 .andExpect(view().name("Resident"))
                 .andExpect(model().attribute("isNew", is(true)))
                 .andExpect(model().attribute("residentAttribute", isA(Resident.class)));
-        verify(residentService, times(1)).getAllApartmentNumber();
     }
 
     @Test
     public void shouldAddNewResident() throws Exception {
+        int countBefore = residentService.count();
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/resident")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("firstName", "Stephen")
                         .param("lastName", "King")
-                        .param("email", "stephenking@test.com")
+                        .param("email", "someEmailforKing@test.com")
                         .param("arrivalTime", String.valueOf(LocalDate.of(2021, 3, 13)))
                         .param("departureTime", String.valueOf(LocalDate.of(2021, 3, 23)))
                         .param("apartmentNumber", String.valueOf(101))
@@ -147,18 +145,16 @@ public class ResidentControllerTest {
                 .andExpect(view().name("redirect:/residents"))
                 .andExpect(redirectedUrl("/residents"));
 
-        verify(residentService).create(captor.capture());
+        int countAfter = residentService.count();
 
-        Resident resident = captor.getValue();
-        Assertions.assertEquals(101, resident.getApartmentNumber());
-        Assertions.assertEquals("Stephen", resident.getFirstName());
+        Assertions.assertEquals(countBefore + 1, countAfter);
     }
 
     @Test
     public void shouldOpenEditResidentPageById() throws Exception {
         Resident resident = createResident(1, "Stephen", "King", "stephenking@test.com", LocalDate.of(2021, 3, 13),
                 LocalDate.of(2021, 3, 23), 101);
-        when(residentService.findById(any())).thenReturn(resident);
+
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/resident/" + resident.getResidentId())
         ).andDo(MockMvcResultHandlers.print())
@@ -180,8 +176,6 @@ public class ResidentControllerTest {
                         hasProperty("departureTime", is(resident.getDepartureTime()))))
                 .andExpect(model().attribute("residentAttribute",
                         hasProperty("apartmentNumber", is(resident.getApartmentNumber()))));
-        verify(residentService, times(1)).getAllApartmentNumber();
-        verify(residentService).findById(1);
     }
 
     @Test
@@ -190,14 +184,16 @@ public class ResidentControllerTest {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/resident/" + id)
         ).andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/residents"));
-        verify(residentService).findById(id);
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(result -> Assertions.assertTrue(result.getResolvedException()
+                        instanceof IllegalArgumentException))
+                .andExpect(MockMvcResultMatchers.view().name("errorPage"));
+
     }
 
     @Test
     public void shouldUpdateResidentAfterEdit() throws Exception {
-
+        //Resident with id = 1 has firstName = Stephen
         String testName = "Alex";
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/resident/1")
@@ -213,14 +209,13 @@ public class ResidentControllerTest {
                 .andExpect(view().name("redirect:/residents"))
                 .andExpect(redirectedUrl("/residents"));
 
-        verify(residentService).update(captor.capture());
-
-        Resident resident = captor.getValue();
+        Resident resident = residentService.findById(1);
         Assertions.assertEquals(testName, resident.getFirstName());
     }
 
     @Test
     public void shouldDeleteResident() throws Exception {
+        int countBefore = residentService.count();
         int id = 1;
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/resident/" + id + "/delete")
@@ -228,9 +223,13 @@ public class ResidentControllerTest {
                 .andExpect(view().name("redirect:/residents"))
                 .andExpect(redirectedUrl("/residents"));
 
-        verify(residentService).delete(id);
+        int countAfter = residentService.count();
+        Assertions.assertEquals(countBefore, countAfter + 1);
     }
 
+    /*
+    create this method because of Resident class hasn't id field in constructor
+     */
     private Resident createResident(int id, String firstName, String lastName, String email,
                                     LocalDate arrivalTime, LocalDate departureTime, int apartmentNumber) {
         Resident resident = new Resident();

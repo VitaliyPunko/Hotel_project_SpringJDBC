@@ -72,6 +72,7 @@ public class ApartmentController {
 
     /**
      * Goto edit apartment page.
+     * if id doesn't exist return errorPage. Look GlobalExceptionHandler
      *
      * @return view name
      */
@@ -79,9 +80,7 @@ public class ApartmentController {
     public final String gotoEditApartmentPage(@PathVariable Integer id, Model model) {
         LOGGER.debug("gotoEditApartmentPAge({})", id);
         Apartment apartment = apartmentService.findById(id);
-        if (apartment == null) {
-            return "redirect:/apartments";
-        }
+
         model.addAttribute("isNew", false);
         model.addAttribute("apartmentAttribute", apartment);
         return "apartmentPage";
@@ -90,12 +89,9 @@ public class ApartmentController {
 
     @PostMapping(value = "/apartment/{id}")
     public String updateApartment(@Valid @ModelAttribute("apartmentAttribute") Apartment apartment, BindingResult bindingResult) {
-//    public String updateApartment(@PathVariable Integer id) {
         if (bindingResult.hasErrors()) {
             return "apartmentPage";
         }
-//        Apartment apartment = apartmentService.findById(id);
-
         LOGGER.debug("update apartment({})", apartment);
         apartmentService.update(apartment);
         return "redirect:/apartments";

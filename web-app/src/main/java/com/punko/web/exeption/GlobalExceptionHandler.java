@@ -17,8 +17,21 @@ public class GlobalExceptionHandler {
     public static final String DEFAULT_ERROR_VIEW = "errorPage";
 
     //type Exception? HttpClientErrorException
-    @ExceptionHandler(value = Exception.class)
-    public ModelAndView defaultErrorHandler(Exception e) throws Exception {
+    @ExceptionHandler(value = HttpClientErrorException.class)
+    public ModelAndView defaultErrorHandler(HttpClientErrorException e) {
+        if (AnnotationUtils.findAnnotation
+                (e.getClass(), ResponseStatus.class) != null)
+            throw e;
+
+        LOGGER.debug("Custom error page for HttpClientErrorException");
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("exception", e);
+        mav.setViewName(DEFAULT_ERROR_VIEW);
+        return mav;
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ModelAndView IllegalArgumentExceptionHandler(IllegalArgumentException e) {
         if (AnnotationUtils.findAnnotation
                 (e.getClass(), ResponseStatus.class) != null)
             throw e;
