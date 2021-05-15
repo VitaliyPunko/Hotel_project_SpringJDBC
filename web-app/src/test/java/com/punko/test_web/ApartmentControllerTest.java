@@ -120,18 +120,16 @@ public class ApartmentControllerTest {
         Assertions.assertEquals(countBefore + 1, countAfter);
     }
 
-//TODO fix
-
-//    @Test
-//    public void shouldAddingNewApartmentWithWrongParam() throws Exception {
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.post("/apartment")
-//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                        .param("apartmentNumber", String.valueOf(-10))
-//                        .param("apartmentClass", "SomeWord")
-//        ).andExpect(status().is3xxRedirection())
-//                .andExpect(view().name("/apartmentPage"));
-//    }
+    @Test
+    public void shouldAddingNewApartmentWithWrongParam() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/apartment")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("apartmentNumber", String.valueOf(-10))
+                        .param("apartmentClass", "SomeWord")
+        ).andExpect(status().isOk())
+                .andExpect(view().name("apartmentPage"));
+    }
 
     @Test
     public void shouldOpenEditApartmentPageById() throws Exception {
@@ -179,6 +177,18 @@ public class ApartmentControllerTest {
 
         Apartment apartment = apartmentService.findById(1);
         Assertions.assertEquals(testName, apartment.getApartmentClass());
+    }
+
+    @Test
+    public void shouldUpdateApartmentWithWrongParam() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/apartment/1")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("apartmentId", "1")
+                        .param("apartmentNumber", String.valueOf(-10))
+                        .param("apartmentClass", "MEDIUM")
+        ).andExpect(status().isOk())
+                .andExpect(view().name("apartmentPage"));
     }
 
     @Test

@@ -151,6 +151,22 @@ public class ResidentControllerTest {
     }
 
     @Test
+    public void shouldAddNewResidentWithWrongParam() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/resident")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("firstName", "")
+                        .param("lastName", "")
+                        .param("email", "someEmailforKing@test.com")
+                        .param("arrivalTime", String.valueOf(LocalDate.of(2021, 3, 13)))
+                        .param("departureTime", String.valueOf(LocalDate.of(2021, 3, 23)))
+                        .param("apartmentNumber", String.valueOf(101))
+        ).andExpect(status().isOk())
+                .andExpect(view().name("Resident"));
+
+    }
+
+    @Test
     public void shouldOpenEditResidentPageById() throws Exception {
         Resident resident = createResident(1, "Stephen", "King", "stephenking@test.com", LocalDate.of(2021, 3, 13),
                 LocalDate.of(2021, 3, 23), 101);
@@ -211,6 +227,23 @@ public class ResidentControllerTest {
 
         Resident resident = residentService.findById(1);
         Assertions.assertEquals(testName, resident.getFirstName());
+    }
+
+    @Test
+    public void shouldEditResidentWithWrongParam() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/resident/1")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("residentId", "1")
+                        .param("firstName", "")
+                        .param("lastName", "")
+                        .param("email", "someEmailforKing@test.com")
+                        .param("arrivalTime", String.valueOf(LocalDate.of(2021, 3, 13)))
+                        .param("departureTime", String.valueOf(LocalDate.of(2021, 3, 23)))
+                        .param("apartmentNumber", String.valueOf(101))
+        ).andExpect(status().isOk())
+                .andExpect(view().name("Resident"));
+
     }
 
     @Test
