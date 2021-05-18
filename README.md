@@ -1,4 +1,4 @@
-[![Java CI with Maven](https://github.com/Brest-Java-Course-2021/vpunko/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/Brest-Java-Course-2021/vpunko/actions/workflows/maven.yml)
+[![Java CI with Maven](https://github.com/VitaliyPunko/Hotel_project_SpringJDBC/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/VitaliyPunko/Hotel_project_SpringJDBC/actions/workflows/maven.yml)
 
 # Vitaliy Punko, Hotel project
 
